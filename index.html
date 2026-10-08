@@ -96,7 +96,7 @@
     </div>
 
     <script>
-        // ЗАМЕНИ НА СВОЙ АДРЕС КОНТРАКТА В СЕТИ BASE MAINNET:
+        // ВСТАВЬ СЮДА АДРЕС СВОЕГО КОНТРАКТА:
         const CONTRACT_ADDRESS = "0xA3d3A17ad74A2Efa52Df3D20D345F6dFbC0Af862";
 
         const tokens = {
@@ -123,18 +123,13 @@
             if (window.ethereum) {
                 try {
                     provider = new ethers.providers.Web3Provider(window.ethereum);
-                    // Проверка сети Base Mainnet (chainId 8453)
-                    const network = await provider.getNetwork();
-                    if (network.chainId !== 8453) {
-                        alert("Переключите сеть в MetaMask на Base Mainnet!");
-                        return;
-                    }
                     await provider.send("eth_requestAccounts", []);
                     signer = provider.getSigner();
                     userAddress = await signer.getAddress();
                     document.getElementById("connectBtn").innerText = userAddress.substring(0, 6) + "..." + userAddress.substring(38);
                 } catch (err) {
                     console.error(err);
+                    alert("Ошибка подключения: " + err.message);
                 }
             } else {
                 alert("Установите MetaMask!");
