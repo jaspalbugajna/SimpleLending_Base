@@ -3,101 +3,93 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BaseLend Protocol — Mainnet</title>
+    <title>Base Lending Protocol</title>
     <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
     <style>
         :root {
             --primary: #0052ff;
-            --bg: #0b0f19;
-            --card-bg: #131b2e;
-            --text: #f8fafc;
-            --text-secondary: #94a3b8;
-            --border: #1e293b;
+            --bg: #070b14;
+            --card: #111827;
+            --text: #f3f4f6;
+            --gray: #9ca3af;
+            --border: #1f2937;
             --success: #10b981;
         }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-        body { background-color: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 30px 20px; }
-        
-        header { width: 100%; max-width: 900px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; background: var(--card-bg); padding: 20px 30px; border-radius: 16px; border: 1px solid var(--border); }
-        h1 { font-size: 22px; font-weight: 700; color: var(--primary); display: flex; align-items: center; gap: 10px; }
-        .connect-btn { background: var(--primary); color: white; border: none; padding: 12px 24px; border-radius: 10px; font-weight: 600; cursor: pointer; transition: 0.2s; }
-        .connect-btn:hover { opacity: 0.85; }
-
-        .container { width: 100%; max-width: 900px; display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
-        .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 20px; padding: 25px; display: flex; flex-direction: column; gap: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
-        .card h2 { font-size: 20px; font-weight: 600; }
-        .info { font-size: 13px; color: var(--text-secondary); background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 8px; border-left: 3px solid var(--primary); }
-        
-        .form-group { display: flex; flex-direction: column; gap: 6px; }
-        label { font-size: 13px; font-weight: 500; color: var(--text-secondary); }
-        select, input { background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 12px; color: var(--text); font-size: 15px; outline: none; transition: 0.2s; }
-        select:focus, input:focus { border-color: var(--primary); }
-        
-        .action-btn { background: var(--primary); color: white; border: none; padding: 12px; border-radius: 10px; font-weight: 600; font-size: 15px; cursor: pointer; transition: 0.2s; }
-        .action-btn:hover { opacity: 0.85; }
-        .secondary-btn { background: #334155; }
-        
-        .status { font-size: 13px; text-align: center; color: var(--success); min-height: 18px; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
+        body { background: var(--bg); color: var(--text); padding: 30px; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
+        header { width: 100%; max-width: 800px; display: flex; justify-content: space-between; align-items: center; background: var(--card); padding: 20px; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 25px; }
+        h1 { font-size: 20px; color: var(--primary); }
+        .btn { background: var(--primary); color: white; border: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; }
+        .container { width: 100%; max-width: 800px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .panel { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 12px; }
+        .panel h2 { font-size: 18px; }
+        .note { font-size: 12px; color: var(--gray); background: rgba(255,255,255,0.03); padding: 8px; border-radius: 6px; border-left: 3px solid var(--primary); }
+        .field { display: flex; flex-direction: column; gap: 4px; }
+        label { font-size: 12px; color: var(--gray); }
+        select, input { background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 10px; color: var(--text); outline: none; }
+        .action { background: var(--primary); color: white; border: none; padding: 10px; border-radius: 6px; font-weight: bold; cursor: pointer; }
+        .secondary { background: #374151; }
+        .status { font-size: 12px; color: var(--success); text-align: center; min-height: 15px; }
     </style>
 </head>
 <body>
 
     <header>
-        <h1>⚡ BaseLend Mainnet</h1>
-        <button id="connectBtn" class="connect-btn" onclick="connectWallet()">Подключить кошелек</button>
+        <h1>Base Lending</h1>
+        <button id="connectBtn" class="btn" onclick="connectWallet()">Подключить кошелек</button>
     </header>
 
     <div class="container">
-        <!-- Депозит -->
-        <div class="card">
-            <h2>Депозит активов</h2>
-            <div class="info">Комиссия при вводе: 0.5%</div>
-            <div class="form-group">
-                <label>Актив</label>
+        <!-- Депозиты -->
+        <div class="panel">
+            <h2>Депозит</h2>
+            <div class="note">Комиссия в пул: 0.5%</div>
+            <div class="field">
+                <label>Токен</label>
                 <select id="depToken">
                     <option value="ETH">ETH (WETH)</option>
                     <option value="USDbC">USDbC</option>
                     <option value="USDC">USDC</option>
                 </select>
             </div>
-            <div class="form-group">
-                <label>Сумма</label>
-                <input type="number" id="depAmount" placeholder="0.0" step="any">
+            <div class="field">
+                <label>Сумма депозита</label>
+                <input type="number" id="depAmount" placeholder="0.0">
             </div>
-            <button class="action-btn" onclick="depositTokens()">Внести депозит</button>
-            <div class="form-group" style="margin-top: 10px;">
-                <label>Сумма для вывода</label>
-                <input type="number" id="witAmount" placeholder="0.0" step="any">
+            <button class="action" onclick="depositTokens()">Внести</button>
+            
+            <div class="field" style="margin-top: 10px;">
+                <label>Сумма вывода</label>
+                <input type="number" id="witAmount" placeholder="0.0">
             </div>
-            <button class="action-btn secondary-btn" onclick="withdrawTokens()">Вывести депозит</button>
+            <button class="action secondary" onclick="withdrawTokens()">Вывести</button>
             <div id="depStatus" class="status"></div>
         </div>
 
-        <!-- Займ -->
-        <div class="card">
-            <h2>Займ и Кредиты</h2>
-            <div class="info">Процентная ставка: 1% в неделю</div>
-            <div class="form-group">
-                <label>Актив</label>
+        <!-- Займы -->
+        <div class="panel">
+            <h2>Займ</h2>
+            <div class="note">Процент: 1% в неделю</div>
+            <div class="field">
+                <label>Токен</label>
                 <select id="borToken">
                     <option value="ETH">ETH (WETH)</option>
                     <option value="USDbC">USDbC</option>
                     <option value="USDC">USDC</option>
                 </select>
             </div>
-            <div class="form-group">
+            <div class="field">
                 <label>Сумма займа</label>
-                <input type="number" id="borAmount" placeholder="0.0" step="any">
+                <input type="number" id="borAmount" placeholder="0.0">
             </div>
-            <button class="action-btn" onclick="borrowTokens()">Взять в долг</button>
-            <button class="action-btn secondary-btn" onclick="repayTokens()" style="margin-top: 10px;">Вернуть долг (+ проценты)</button>
+            <button class="action" onclick="borrowTokens()">Взять в долг</button>
+            <button class="action secondary" onclick="repayTokens()" style="margin-top: 10px;">Вернуть долг (+ проценты)</button>
             <div id="borStatus" class="status"></div>
         </div>
     </div>
 
     <script>
-        // ВСТАВЬ СЮДА АДРЕС СВОЕГО КОНТРАКТА:
-        const CONTRACT_ADDRESS = "0xA3d3A17ad74A2Efa52Df3D20D345F6dFbC0Af862";
+        const CONTRACT_ADDRESS = "0xc64cdA93b649943E11DDb217619175177f4e56E6";
 
         const tokens = {
             "ETH": "0x4200000000000000000000000000000000000006",
@@ -105,10 +97,7 @@
             "USDC": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913"
         };
 
-        const erc20Abi = [
-            "function approve(address spender, uint256 amount) external returns (bool)"
-        ];
-
+        const erc20Abi = ["function approve(address spender, uint256 amount) external returns (bool)"];
         const lendingAbi = [
             "function deposit(address token, uint256 amount) external",
             "function withdraw(address token, uint256 amount) external",
@@ -120,20 +109,12 @@
         let provider, signer, userAddress;
 
         async function connectWallet() {
-            if (window.ethereum) {
-                try {
-                    provider = new ethers.providers.Web3Provider(window.ethereum);
-                    await provider.send("eth_requestAccounts", []);
-                    signer = provider.getSigner();
-                    userAddress = await signer.getAddress();
-                    document.getElementById("connectBtn").innerText = userAddress.substring(0, 6) + "..." + userAddress.substring(38);
-                } catch (err) {
-                    console.error(err);
-                    alert("Ошибка подключения: " + err.message);
-                }
-            } else {
-                alert("Установите MetaMask!");
-            }
+            if (!window.ethereum) { alert("Нужен MetaMask!"); return; }
+            provider = new ethers.providers.Web3Provider(window.ethereum);
+            await provider.send("eth_requestAccounts", []);
+            signer = provider.getSigner();
+            userAddress = await signer.getAddress();
+            document.getElementById("connectBtn").innerText = userAddress.substring(0, 6) + "..." + userAddress.substring(38);
         }
 
         async function depositTokens() {
@@ -142,24 +123,22 @@
                 if (!signer) await connectWallet();
                 const sym = document.getElementById("depToken").value;
                 const amt = document.getElementById("depAmount").value;
-                if (!amt || amt <= 0) { alert("Введите сумму"); return; }
+                if (!amt) return;
 
                 const tokenAddr = tokens[sym];
                 const parsedAmt = ethers.utils.parseUnits(amt, 18);
                 const tokenContract = new ethers.Contract(tokenAddr, erc20Abi, signer);
                 const lendingContract = new ethers.Contract(CONTRACT_ADDRESS, lendingAbi, signer);
 
-                status.innerText = "Одобрение токенов (Approve)...";
+                status.innerText = "Approve...";
                 let tx = await tokenContract.approve(CONTRACT_ADDRESS, parsedAmt);
                 await tx.wait();
 
-                status.innerText = "Внесение депозита...";
+                status.innerText = "Депозит...";
                 tx = await lendingContract.deposit(tokenAddr, parsedAmt);
                 await tx.wait();
-                status.innerText = "Депозит успешно выполнен! ✅";
-            } catch (err) {
-                status.innerText = "Ошибка: " + (err.reason || err.message);
-            }
+                status.innerText = "Готово! ✅";
+            } catch (err) { status.innerText = "Ошибка: " + (err.reason || err.message); }
         }
 
         async function withdrawTokens() {
@@ -168,19 +147,17 @@
                 if (!signer) await connectWallet();
                 const sym = document.getElementById("depToken").value;
                 const amt = document.getElementById("witAmount").value;
-                if (!amt || amt <= 0) { alert("Введите сумму"); return; }
+                if (!amt) return;
 
                 const tokenAddr = tokens[sym];
                 const parsedAmt = ethers.utils.parseUnits(amt, 18);
                 const lendingContract = new ethers.Contract(CONTRACT_ADDRESS, lendingAbi, signer);
 
-                status.innerText = "Вывод средств...";
+                status.innerText = "Вывод...";
                 const tx = await lendingContract.withdraw(tokenAddr, parsedAmt);
                 await tx.wait();
-                status.innerText = "Средства выведены! ✅";
-            } catch (err) {
-                status.innerText = "Ошибка: " + (err.reason || err.message);
-            }
+                status.innerText = "Готово! ✅";
+            } catch (err) { status.innerText = "Ошибка: " + (err.reason || err.message); }
         }
 
         async function borrowTokens() {
@@ -189,19 +166,17 @@
                 if (!signer) await connectWallet();
                 const sym = document.getElementById("borToken").value;
                 const amt = document.getElementById("borAmount").value;
-                if (!amt || amt <= 0) { alert("Введите сумму"); return; }
+                if (!amt) return;
 
                 const tokenAddr = tokens[sym];
                 const parsedAmt = ethers.utils.parseUnits(amt, 18);
                 const lendingContract = new ethers.Contract(CONTRACT_ADDRESS, lendingAbi, signer);
 
-                status.innerText = "Получение займа...";
+                status.innerText = "Займ...";
                 const tx = await lendingContract.borrow(tokenAddr, parsedAmt);
                 await tx.wait();
-                status.innerText = "Займ выдан! ✅";
-            } catch (err) {
-                status.innerText = "Ошибка: " + (err.reason || err.message);
-            }
+                status.innerText = "Готово! ✅";
+            } catch (err) { status.innerText = "Ошибка: " + (err.reason || err.message); }
         }
 
         async function repayTokens() {
@@ -212,22 +187,20 @@
                 const tokenAddr = tokens[sym];
                 const lendingContract = new ethers.Contract(CONTRACT_ADDRESS, lendingAbi, signer);
 
-                status.innerText = "Расчет долга с процентами...";
+                status.innerText = "Расчет долга...";
                 const totalDebt = await lendingContract.calculateCurrentDebt(userAddress, tokenAddr);
-                if (totalDebt.eq(0)) { alert("У вас нет активного долга"); return; }
+                if (totalDebt.eq(0)) { alert("Нет долга"); return; }
 
                 const tokenContract = new ethers.Contract(tokenAddr, erc20Abi, signer);
-                status.innerText = "Одобрение возврата (Approve)...";
+                status.innerText = "Approve возврата...";
                 let tx = await tokenContract.approve(CONTRACT_ADDRESS, totalDebt);
                 await tx.wait();
 
-                status.innerText = "Возврат долга...";
+                status.innerText = "Погашение...";
                 tx = await lendingContract.repay(tokenAddr);
                 await tx.wait();
-                status.innerText = "Долг успешно погашен! ✅";
-            } catch (err) {
-                status.innerText = "Ошибка: " + (err.reason || err.message);
-            }
+                status.innerText = "Долг погашен! ✅";
+            } catch (err) { status.innerText = "Ошибка: " + (err.reason || err.message); }
         }
     </script>
 </body>
